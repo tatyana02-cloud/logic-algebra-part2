@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Тренажер: Алгебра логики - Часть 2</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background: #f1f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .quiz-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 860px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+      padding: 32px;
+      position: relative;
+    }
+    .start-screen {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .start-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 14px;
+    }
+    .start-desc {
+      font-size: 16px;
+      color: #475569;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .rules-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px 24px;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+    .rules-title {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+    }
+    .rules-list {
+      list-style-type: decimal;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rules-list li {
+      font-size: 15px;
+      color: #334155;
+      line-height: 1.5;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 30px;
+      font-size: 15.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #2563eb;
+      transition: width 0.3s ease;
+    }
+    .header-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #64748b;
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-counters {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .question-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #0f172a;
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+    .op-header {
+      font-size: 19px;
+      font-weight: 700;
+      color: #0f172a;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 16px;
+    }
+    .task-desc {
+      font-size: 17px;
+      color: #334155;
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+    .task-instruction {
+      font-size: 17px;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 18px;
+    }
+    .task-comment {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #64748b;
+      border-radius: 8px;
+      padding: 12px 18px;
+      margin: 12px 0 16px 0;
+      font-size: 15.5px;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .formula-card {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 16px 22px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .formula-text {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+    }
+    .formula-sub {
+      font-size: 14.5px;
+      color: #64748b;
+      margin-top: 8px;
+      font-weight: 500;
+      line-height: 1.45;
+    }
+    .not {
+      text-decoration: overline;
+      padding-top: 2px;
+      display: inline-block;
+    }
+
+    .warmup-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .warmup-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 20px;
+    }
+    .warmup-expr {
+      font-size: 17px;
+      font-weight: 600;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+    }
+    .warmup-select {
+      font-size: 16px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 6px;
+      border: 2px solid #cbd5e1;
+      background: #ffffff;
+      cursor: pointer;
+      color: #1e293b;
+      min-width: 80px;
+    }
+
+    .full-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    table.full-logic-table {
+      border-collapse: collapse;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin: 0 auto;
+    }
+    table.full-logic-table th, table.full-logic-table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 12px;
+      text-align: center;
+      font-size: 15.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    table.full-logic-table th {
+      background: #f8fafc;
+      color: #1e293b;
+      font-weight: 700;
+    }
+    .table-cell-input {
+      width: 36px;
+      height: 32px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      color: #0f172a;
+      background: #ffffff;
+      outline: none;
+      transition: all 0.15s;
+    }
+    .table-cell-input:focus {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .dyn-table-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .dyn-table-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .btn-secondary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    table.logic-table {
+      border-collapse: collapse;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+      margin: 0 auto 20px auto;
+    }
+    table.logic-table th, table.logic-table td {
+      border: 1px solid #cbd5e1;
+      padding: 10px 24px;
+      text-align: center;
+      font-size: 16.5px;
+      font-weight: 600;
+    }
+    table.logic-table th {
+      background: #f8fafc;
+      color: #1e293b;
+      font-weight: 700;
+    }
+    table.logic-table td.res-col {
+      background: #f1f5f9;
+      color: #2563eb;
+    }
+
+    .input-answer-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .text-input-field {
+      font-size: 20px;
+      font-weight: 700;
+      text-transform: lowercase;
+      letter-spacing: 4px;
+      text-align: center;
+      padding: 8px 16px;
+      width: 180px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .text-input-field:focus {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-check-action {
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 26px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-check-action:hover:not(:disabled) {
+      background: #1e293b;
+    }
+    .btn-check-action:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-skip-action {
+      background: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 11px 22px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-skip-action:hover:not(:disabled) {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .btn-skip-action:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-retry-action {
+      background: #475569;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 26px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      transition: background 0.2s;
+    }
+    .btn-retry-action:hover {
+      background: #334155;
+    }
+
+    .feedback-box {
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+      display: none;
+      line-height: 1.55;
+    }
+    .feedback-box.correct {
+      background: #ecfdf5;
+      border-left: 5px solid #10b981;
+      color: #065f46;
+    }
+    .feedback-box.partial {
+      background: #fefce8;
+      border-left: 5px solid #eab308;
+      color: #854d0e;
+    }
+    .feedback-box.wrong {
+      background: #fef2f2;
+      border-left: 5px solid #ef4444;
+      color: #991b1b;
+    }
+    .next-btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 26px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      transition: background 0.2s;
+    }
+    .next-btn:hover {
+      background: #1d4ed8;
+    }
+    .result-screen {
+      display: none;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .result-score {
+      font-size: 44px;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 12px 0;
+    }
+    .result-msg {
+      font-size: 15px;
+      color: #475569;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .locked-notice {
+      color: #b91c1c;
+      font-weight: 600;
+      font-size: 14px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 10px 16px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    .results-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 16px 0 10px 0;
+    }
+    .badge-item {
+      min-width: 58px;
+      height: 42px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 2px 6px;
+    }
+    .badge-item span {
+      font-size: 11px;
+      opacity: 0.85;
+    }
+    .badge-item.score-2 {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 2px solid #10b981;
+    }
+    .badge-item.score-1 {
+      background: #fefce8;
+      color: #854d0e;
+      border: 2px solid #eab308;
+    }
+    .badge-item.score-0 {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 2px solid #ef4444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-card">
+    <div class="start-screen" id="start-screen">
+      <h1 class="start-title">Алгебра логики: Часть 2</h1>
+      <p class="start-desc">Практический тренажёр по материалам домашнего задания: вычисление формул, построение таблиц истинности и аналитическое решение задач формата ЕГЭ №2.</p>
+      
+      <div class="rules-card">
+        <div class="rules-title">Инструкция к прохождению:</div>
+        <ol class="rules-list">
+          <li><strong>Попытки:</strong> на каждое задание даётся не более 3 попыток.</li>
+          <li><strong>Система оценивания:</strong> 
+            2 балла (зеленый) — верное решение с 1-й попытки; 
+            1 балл (желтый) — верное решение со 2-й или 3-й попытки; 
+            0 баллов (красный) — исчерпаны все попытки или пропуск задания.
+          </li>
+          <li><strong>Повторное прохождение:</strong> тест можно пройти только один раз.</li>
+          <li><strong>Пропуск задания:</strong> если не знаете решение, можно нажать «Пропустить задание».</li>
+          <li><strong>Проверка:</strong> тренажер сообщает только статус решения (верно или неверно).</li>
+        </ol>
+      </div>
+      <button class="btn-primary" onclick="startQuiz()">Начать выполнение</button>
+    </div>
+
+    <div id="quiz-content" style="display: none;">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress"></div>
+      </div>
+      <div class="header-info">
+        <span id="question-number">Вопрос 1 из 6</span>
+        <div class="status-counters">
+          <span id="attempt-counter">Попытки: 0 / 3</span>
+          <span id="score-counter">Баллы: 0 / 12</span>
+        </div>
+      </div>
+      <div class="question-title" id="question-text"></div>
+      
+      <div class="formula-card" id="formula-box" style="display: none;">
+        <div class="formula-text" id="formula-content"></div>
+        <div class="formula-sub" id="formula-sub" style="display: none;"></div>
+      </div>
+
+      <div id="warmup-box" style="display: none;"></div>
+      <div id="full-table-box" style="display: none;"></div>
+      <div id="string-input-box" style="display: none;"></div>
+      <div id="dynamic-table-box" style="display: none;"></div>
+      <div id="table-box" style="display: none;"></div>
+      
+      <div class="feedback-box" id="feedback"></div>
+      
+      <div class="action-row">
+        <button class="btn-check-action" id="check-btn">Проверить</button>
+        <button class="btn-skip-action" id="skip-btn" onclick="skipCurrentQuestion()">Пропустить задание</button>
+        <button class="btn-retry-action" id="retry-btn" onclick="retryCurrentQuestion()">Попробовать еще раз</button>
+        <button class="next-btn" id="next-btn" onclick="nextQuestion()">Продолжить</button>
+      </div>
+    </div>
+
+    <div class="result-screen" id="result-screen">
+      <h2>Практикум завершен</h2>
+      <div class="result-score" id="final-score">0 / 12</div>
+      <p class="result-msg" id="final-message"></p>
+      <div class="locked-notice" id="locked-msg" style="display: none;">
+        Повторное прохождение заблокировано.
+      </div>
+      
+      <div style="font-weight: 600; color: #334155; margin-bottom: 8px;">Результаты по заданиям:</div>
+      <div class="results-badges" id="results-badges"></div>
+    </div>
+  </div>
+
+  <script>
+    const MAX_ATTEMPTS = 3;
+    const STORAGE_KEY = "logic_quiz_completed_v3";
+
+    function stripTags(text) {
+      if (!text || typeof text !== 'string') return text;
+      return text;
+    }
+
+    const questionsData = [
+      {
+        type: "warmup_multi",
+        text: `
+          <div class="op-header">№1. Разминка: вычисление логических выражений</div>
+          <p class="task-desc">Вычислите значения логических выражений, учитывая приоритет операций и скобки:</p>
+        `,
+        items: [
+          { letter: "а", expr: "¬1 ∨ (0 ∧ 1)", ans: 0 },
+          { letter: "б", expr: "(1 → 0) ∨ 1", ans: 1 },
+          { letter: "в", expr: "(0 ↔ 1) ∧ ¬0", ans: 0 },
+          { letter: "г", expr: "¬(1 ∨ 0) → 0", ans: 1 }
+        ]
+      },
+      {
+        type: "full_table_calc",
+        text: `
+          <div class="op-header">№2. Построение таблицы истинности</div>
+          <p class="task-desc">Постройте таблицу истинности для функции: F = (x → y) ∧ (¬y ∨ z)</p>
+          <div class="task-comment">
+            <strong>Порядок выполнения:</strong><br>
+            1) Выпишите все 8 уникальных двоичных наборов аргументов (x, y, z) в любом порядке (при вводе z курсор переходит на x следующей строки).<br>
+            2) Затем заполните промежуточные столбцы: ¬y, (¬y ∨ z) и (x → y).<br>
+            3) В конце заполните итоговый столбец F.
+          </div>
+          <p class="task-instruction">Заполните пустые ячейки (вводите 0 или 1):</p>
+        `,
+        formula: "F = (x → y) ∧ (<span class='not'>y</span> ∨ z)",
+        subText: "Выпишите наборы аргументов и вычислите значения функции F"
+      },
+      {
+        type: "string_input",
+        text: `
+          <div class="op-header">№3. Восстановление переменных (ЕГЭ №2)</div>
+          <p class="task-desc">Для логической функции F = (x → y) ∧ (¬y ∨ z) составили фрагмент таблицы истинности:</p>
+          <p class="task-instruction">Каким буквам x, y, z соответствуют столбцы 1, 2, 3 таблицы? В ответе запишите три буквы без пробелов (например, xyz):</p>
+        `,
+        formula: "F = (x → y) ∧ (<span class='not'>y</span> ∨ z)",
+        subText: "Определите соответствие переменных столбцам таблицы",
+        table: [
+          { cols: ["?", "?", "?"], f: "F", vals: ["0", "0", "0", "1"] },
+          { cols: ["?", "?", "?"], f: "F", vals: ["0", "0", "1", "1"] },
+          { cols: ["?", "?", "?"], f: "F", vals: ["0", "1", "1", "1"] },
+          { cols: ["?", "?", "?"], f: "F", vals: ["1", "1", "1", "1"] }
+        ],
+        correctAnswer: "xyz"
+      },
+      {
+        type: "dynamic_table",
+        text: `
+          <div class="op-header">№4. Рассуждаем без полной таблицы</div>
+          <p class="task-desc">Известно, что F = (x → y) ∧ (y ∨ ¬z) и F = 1. Определите все возможные наборы значений x, y, z.</p>
+          <p class="task-instruction">Запишите ответ в виде таблицы: добавляйте строки кнопкой ниже и вводите наборы (порядок строк произвольный):</p>
+        `,
+        formula: "(x → y) ∧ (y ∨ <span class='not'>z</span>) = 1",
+        subText: "Внесите все уникальные наборы аргументов, обращающие выражение в 1",
+        columns: ["x", "y", "z"],
+        expectedSets: ["000", "010", "011", "110", "111"],
+        minRequired: 5,
+        validateFn: (s) => ["000", "010", "011", "110", "111"].includes(s)
+      },
+      {
+        type: "dynamic_table",
+        text: `
+          <div class="op-header">№5. Задание повышенной сложности</div>
+          <p class="task-desc">Для логической функции F = ((a ∧ b) → c) ∧ ((b ∧ c) → d) известно, что F = 0.</p>
+          <p class="task-instruction">Приведите любые два набора значений a, b, c, d, при которых F = 0 (добавьте строки в таблицу и введите значения):</p>
+        `,
+        formula: "F = ((a ∧ b) → c) ∧ ((b ∧ c) → d) = 0",
+        subText: "Конъюнкция равна 0, если ложна хотя бы одна из скобок",
+        columns: ["a", "b", "c", "d"],
+        minRequired: 2,
+        validateFn: (s) => {
+          const a = parseInt(s[0], 10);
+          const b = parseInt(s[1], 10);
+          const c = parseInt(s[2], 10);
+          const d = parseInt(s[3], 10);
+          const s1 = (!(a === 1 && b === 1) || c === 1) ? 1 : 0;
+          const s2 = (!(b === 1 && c === 1) || d === 1) ? 1 : 0;
+          return (s1 && s2) === 0;
+        }
+      },
+      {
+        type: "dynamic_table",
+        text: `
+          <div class="op-header">Дополнительное задание: наборы для ¬(x → y) = 1</div>
+          <p class="task-desc">Не строя полную таблицу истинности, определите, при каких значениях x и y выражение ¬(x → y) равно 1.</p>
+          <p class="task-instruction">Запишите ответ в таблицу:</p>
+        `,
+        formula: "¬(x → y) = 1",
+        subText: "Логический вывод без полной таблицы",
+        columns: ["x", "y"],
+        expectedSets: ["10"],
+        minRequired: 1,
+        validateFn: (s) => s === "10"
+      }
+    ];
+
+    const maxScore = questionsData.length * 2;
+    let currentQuestion = 0;
+    let score = 0;
+    let currentQuestionSolved = false;
+    let attemptsThisQuestion = 0;
+    let questionScores = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      if (savedData) {
+        try {
+          const parsed = JSON.parse(savedData);
+          score = parsed.score || 0;
+          questionScores = parsed.scores || [];
+          renderResultScreen(true);
+        } catch(e) {
+          renderResultScreen(true);
+        }
+      }
+    });
+
+    function startQuiz() {
+      if (localStorage.getItem(STORAGE_KEY)) {
+        renderResultScreen(true);
+        return;
+      }
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('quiz-content').style.display = 'block';
+      loadQuestion();
+    }
+
+    function updateAttemptCounter() {
+      document.getElementById('attempt-counter').innerText = `Попытки: ${attemptsThisQuestion} / ${MAX_ATTEMPTS}`;
+    }
+
+    function clearFullTable() {
+      if (currentQuestionSolved) return;
+      const cells = document.querySelectorAll('.full-grid-cell');
+      cells.forEach(cell => {
+        cell.value = '';
+      });
+      const firstCell = document.querySelector('.full-grid-cell[data-r="0"][data-c="0"]');
+      if (firstCell) firstCell.focus();
+    }
+
+    function loadQuestion() {
+      currentQuestionSolved = false;
+      attemptsThisQuestion = 0;
+      const q = questionsData[currentQuestion];
+      
+      document.getElementById('question-number').innerText = `Вопрос ${currentQuestion + 1} из ${questionsData.length}`;
+      document.getElementById('score-counter').innerText = `Баллы: ${score} / ${maxScore}`;
+      updateAttemptCounter();
+      document.getElementById('progress').style.width = `${(currentQuestion / questionsData.length) * 100}%`;
+      document.getElementById('question-text').innerHTML = stripTags(q.text);
+
+      const formulaBlock = document.getElementById('formula-box');
+      const formulaContent = document.getElementById('formula-content');
+      const formulaSub = document.getElementById('formula-sub');
+
+      if (q.formula) {
+        formulaContent.innerHTML = stripTags(q.formula);
+        if (q.subText) {
+          formulaSub.innerHTML = stripTags(q.subText);
+          formulaSub.style.display = 'block';
+        } else {
+          formulaSub.style.display = 'none';
+        }
+        formulaBlock.style.display = 'block';
+      } else {
+        formulaBlock.style.display = 'none';
+      }
+
+      const warmupBox = document.getElementById('warmup-box');
+      const fullTableBox = document.getElementById('full-table-box');
+      const stringInputBox = document.getElementById('string-input-box');
+      const dynamicTableBox = document.getElementById('dynamic-table-box');
+      const tableBox = document.getElementById('table-box');
+
+      warmupBox.style.display = 'none';
+      warmupBox.innerHTML = '';
+      fullTableBox.style.display = 'none';
+      fullTableBox.innerHTML = '';
+      stringInputBox.style.display = 'none';
+      stringInputBox.innerHTML = '';
+      dynamicTableBox.style.display = 'none';
+      dynamicTableBox.innerHTML = '';
+      tableBox.style.display = 'none';
+      tableBox.innerHTML = '';
+
+      const checkBtn = document.getElementById('check-btn');
+
+      if (q.type === "warmup_multi") {
+        let html = '<div class="warmup-container">';
+        q.items.forEach((item, idx) => {
+          html += `
+            <div class="warmup-row">
+              <span class="warmup-expr"><strong>${item.letter})</strong> &nbsp;${stripTags(item.expr)}</span>
+              <select class="warmup-select" id="warmup-select-${idx}">
+                <option value="">?</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+              </select>
+            </div>
+          `;
+        });
+        html += `</div>`;
+        warmupBox.innerHTML = html;
+        warmupBox.style.display = 'block';
+        checkBtn.onclick = checkWarmupAnswer;
+      } else if (q.type === "full_table_calc") {
+        let html = '<div class="full-table-wrap"><table class="full-logic-table"><thead><tr>';
+        html += '<th>x</th><th>y</th><th>z</th><th><span class="not">y</span></th><th><span class="not">y</span> ∨ z</th><th>x → y</th><th>F</th></tr></thead><tbody>';
+
+        for (let rIdx = 0; rIdx < 8; rIdx++) {
+          html += `<tr>
+            <td><input class="table-cell-input full-grid-cell" maxlength="1" data-r="${rIdx}" data-c="0" oninput="handleSmartTableInput(this)"></td>
+            <td><input class="table-cell-input full-grid-cell" maxlength="1" data-r="${rIdx}" data-c="1" oninput="handleSmartTableInput(this)"></td>
+            <td><input class="table-cell-input full-grid-cell" maxlength="1" data-r="${rIdx}" data-c="2" oninput="handleSmartTableInput(this)"></td>
+            <td><input class="table-cell-input full-grid-cell" maxlength="1" data-r="${rIdx}" data-c="3" oninput="handleSmartTableInput(this)"></td>
+            <td><input class="table-cell-input full-grid-cell" maxlength="1" data-r="${rIdx}" data-c="4" oninput="handleSmartTableInput(this)"></td>
+            <td><input class="table-cell-input full-grid-cell" maxlength="1" data-r="${rIdx}" data-c="5" oninput="handleSmartTableInput(this)"></td>
+            <td><input class="table-cell-input full-grid-cell" maxlength="1" data-r="${rIdx}" data-c="6" oninput="handleSmartTableInput(this)"></td>
+          </tr>`;
+        }
+
+        html += `</tbody></table>
+          <button class="btn-secondary" id="clear-full-table-btn" onclick="clearFullTable()">Очистить таблицу</button>
+        </div>`;
+        fullTableBox.innerHTML = html;
+        fullTableBox.style.display = 'block';
+        checkBtn.onclick = checkFullTableAnswer;
+      } else if (q.type === "string_input") {
+        if (q.table) {
+          let tableHtml = '<table class="logic-table"><thead><tr>';
+          q.table[0].vals.slice(0, 3).forEach((_, idx) => {
+            tableHtml += `<th>Столбец ${idx + 1}</th>`;
+          });
+          tableHtml += `<th>F</th></tr></thead><tbody>`;
+          q.table.forEach(row => {
+            tableHtml += '<tr>';
+            row.vals.slice(0, 3).forEach(v => {
+              tableHtml += `<td>${v}</td>`;
+            });
+            tableHtml += `<td class="res-col">${row.vals[3]}</td></tr>`;
+          });
+          tableHtml += '</tbody></table>';
+          tableBox.innerHTML = tableHtml;
+          tableBox.style.display = 'block';
+        }
+
+        stringInputBox.innerHTML = `
+          <div class="input-answer-box">
+            <input type="text" class="text-input-field" id="user-str-input" placeholder="xyz" maxlength="3">
+          </div>
+        `;
+        stringInputBox.style.display = 'block';
+        checkBtn.onclick = checkStringAnswer;
+      } else if (q.type === "dynamic_table") {
+        let html = `
+          <div class="dyn-table-container">
+            <table class="logic-table" id="dyn-logic-table" style="margin-bottom: 0;">
+              <thead>
+                <tr>`;
+        q.columns.forEach(col => {
+          html += `<th>${col}</th>`;
+        });
+        html += `</tr>
+              </thead>
+              <tbody id="dyn-table-body"></tbody>
+            </table>
+            <div class="dyn-table-actions">
+              <button class="btn-secondary" id="dyn-add-btn" onclick="addDynamicRow()">+ Добавить строку</button>
+              <button class="btn-secondary" id="dyn-del-btn" onclick="removeDynamicRow()">− Удалить строку</button>
+            </div>
+          </div>
+        `;
+        dynamicTableBox.innerHTML = html;
+        dynamicTableBox.style.display = 'block';
+        checkBtn.onclick = checkDynamicTableAnswer;
+
+        const initialRows = q.minRequired || 2;
+        for (let i = 0; i < initialRows; i++) {
+          addDynamicRow();
+        }
+      }
+
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'none';
+      feedback.className = 'feedback-box';
+      feedback.innerHTML = '';
+      
+      checkBtn.style.display = 'inline-block';
+      checkBtn.disabled = false;
+      document.getElementById('skip-btn').style.display = 'inline-block';
+      document.getElementById('skip-btn').disabled = false;
+      document.getElementById('retry-btn').style.display = 'none';
+      document.getElementById('next-btn').style.display = 'none';
+    }
+
+    function lockCurrentInputs(shouldLock) {
+      document.querySelectorAll('.warmup-select').forEach(el => el.disabled = shouldLock);
+      document.querySelectorAll('.full-grid-cell').forEach(el => el.disabled = shouldLock);
+      document.querySelectorAll('.dyn-input').forEach(el => el.disabled = shouldLock);
+      const strInput = document.getElementById('user-str-input');
+      if (strInput) strInput.disabled = shouldLock;
+      const addBtn = document.getElementById('dyn-add-btn');
+      if (addBtn) addBtn.disabled = shouldLock;
+      const delBtn = document.getElementById('dyn-del-btn');
+      if (delBtn) delBtn.disabled = shouldLock;
+      const clearBtn = document.getElementById('clear-full-table-btn');
+      if (clearBtn) clearBtn.disabled = shouldLock;
+      
+      const checkBtn = document.getElementById('check-btn');
+      const skipBtn = document.getElementById('skip-btn');
+      if (checkBtn) checkBtn.style.display = shouldLock ? 'none' : 'inline-block';
+      if (skipBtn) skipBtn.style.display = shouldLock ? 'none' : 'inline-block';
+    }
+
+    function retryCurrentQuestion() {
+      const feedback = document.getElementById('feedback');
+      feedback.style.display = 'none';
+      document.getElementById('retry-btn').style.display = 'none';
+      lockCurrentInputs(false);
+    }
+
+    function skipCurrentQuestion() {
+      if (currentQuestionSolved) return;
+      currentQuestionSolved = true;
+      questionScores[currentQuestion] = 0;
+      nextQuestion();
+    }
+
+    function handleFailAttempt() {
+      attemptsThisQuestion++;
+      updateAttemptCounter();
+      const feedback = document.getElementById('feedback');
+      feedback.className = 'feedback-box wrong';
+      feedback.style.display = 'block';
+
+      if (attemptsThisQuestion >= MAX_ATTEMPTS) {
+        currentQuestionSolved = true;
+        questionScores[currentQuestion] = 0;
+        feedback.innerText = 'Неверно (попытки исчерпаны)';
+        lockCurrentInputs(true);
+        document.getElementById('retry-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'inline-block';
+      } else {
+        feedback.innerText = 'Неверно';
+        lockCurrentInputs(true);
+        document.getElementById('retry-btn').style.display = 'inline-block';
+      }
+    }
+
+    function handleSuccess() {
+      currentQuestionSolved = true;
+      let earnedPoints = 0;
+      const feedback = document.getElementById('feedback');
+
+      if (attemptsThisQuestion === 0) {
+        earnedPoints = 2;
+        feedback.className = 'feedback-box correct';
+        feedback.innerText = 'Верно (+2 б.)';
+      } else {
+        earnedPoints = 1;
+        feedback.className = 'feedback-box partial';
+        feedback.innerText = 'Верно (+1 б.)';
+      }
+
+      questionScores[currentQuestion] = earnedPoints;
+      score += earnedPoints;
+      document.getElementById('score-counter').innerText = `Баллы: ${score} / ${maxScore}`;
+      feedback.style.display = 'block';
+
+      lockCurrentInputs(true);
+      document.getElementById('retry-btn').style.display = 'none';
+      document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function handleSmartTableInput(input) {
+      if (input.value !== '0' && input.value !== '1') {
+        input.value = '';
+        return;
+      }
+
+      const r = parseInt(input.getAttribute('data-r'), 10);
+      const c = parseInt(input.getAttribute('data-c'), 10);
+
+      let nextInput = null;
+      if (c === 0 || c === 1) {
+        nextInput = document.querySelector(`.full-grid-cell[data-r="${r}"][data-c="${c + 1}"]`);
+      } else if (c === 2) {
+        if (r < 7) {
+          nextInput = document.querySelector(`.full-grid-cell[data-r="${r + 1}"][data-c="0"]`);
+        } else {
+          nextInput = document.querySelector(`.full-grid-cell[data-r="0"][data-c="3"]`);
+        }
+      } else {
+        if (r < 7) {
+          nextInput = document.querySelector(`.full-grid-cell[data-r="${r + 1}"][data-c="${c}"]`);
+        } else if (c < 6) {
+          nextInput = document.querySelector(`.full-grid-cell[data-r="0"][data-c="${c + 1}"]`);
+        }
+      }
+
+      if (nextInput) {
+        nextInput.focus();
+      }
+    }
+
+    function addDynamicRow() {
+      if (currentQuestionSolved) return;
+      const q = questionsData[currentQuestion];
+      const tbody = document.getElementById('dyn-table-body');
+      const tr = document.createElement('tr');
+      let cellsHtml = '';
+      for (let i = 0; i < q.columns.length; i++) {
+        cellsHtml += `<td><input class="table-cell-input dyn-input" maxlength="1" data-col="${i}" oninput="handleDynInput(this)"></td>`;
+      }
+      tr.innerHTML = cellsHtml;
+      tbody.appendChild(tr);
+    }
+
+    function removeDynamicRow() {
+      if (currentQuestionSolved) return;
+      const tbody = document.getElementById('dyn-table-body');
+      if (tbody.children.length > 1) {
+        tbody.removeChild(tbody.lastChild);
+      }
+    }
+
+    function handleDynInput(input) {
+      if (input.value !== '0' && input.value !== '1') {
+        input.value = '';
+        return;
+      }
+      const allInputs = Array.from(document.querySelectorAll('.dyn-input'));
+      const idx = allInputs.indexOf(input);
+      if (idx > -1 && idx < allInputs.length - 1) {
+        allInputs[idx + 1].focus();
+      }
+    }
+
+    function checkWarmupAnswer() {
+      if (currentQuestionSolved) return;
+      const q = questionsData[currentQuestion];
+      let allCorrect = true;
+      let allFilled = true;
+
+      q.items.forEach((item, idx) => {
+        const selectElem = document.getElementById(`warmup-select-${idx}`);
+        const val = selectElem.value;
+        if (val === "") {
+          allFilled = false;
+        } else if (parseInt(val, 10) !== item.ans) {
+          allCorrect = false;
+        }
+      });
+
+      if (!allFilled || !allCorrect) {
+        handleFailAttempt();
+        return;
+      }
+
+      handleSuccess();
+    }
+
+    function checkFullTableAnswer() {
+      if (currentQuestionSolved) return;
+      let allFilled = true;
+      let allCorrect = true;
+      let seenTriplets = new Set();
+      let hasDuplicates = false;
+
+      for (let rIdx = 0; rIdx < 8; rIdx++) {
+        const getVal = (col) => {
+          const inp = document.querySelector(`.full-grid-cell[data-r="${rIdx}"][data-c="${col}"]`);
+          return inp ? inp.value.trim() : '';
+        };
+
+        const vx = getVal(0);
+        const vy = getVal(1);
+        const vz = getVal(2);
+        const v_not_y = getVal(3);
+        const v_or = getVal(4);
+        const v_impl = getVal(5);
+        const v_f = getVal(6);
+
+        if ([vx, vy, vz, v_not_y, v_or, v_impl, v_f].some(v => v === '')) {
+          allFilled = false;
+          continue;
+        }
+
+        const x = parseInt(vx, 10);
+        const y = parseInt(vy, 10);
+        const z = parseInt(vz, 10);
+
+        const triplet = `${x}${y}${z}`;
+        if (seenTriplets.has(triplet)) {
+          hasDuplicates = true;
+        }
+        seenTriplets.add(triplet);
+
+        const exp_not_y = y === 0 ? 1 : 0;
+        const exp_or = (exp_not_y === 1 || z === 1) ? 1 : 0;
+        const exp_impl = (x === 1 && y === 0) ? 0 : 1;
+        const exp_f = (exp_impl === 1 && exp_or === 1) ? 1 : 0;
+
+        const checks = [
+          { actual: parseInt(v_not_y, 10), expected: exp_not_y },
+          { actual: parseInt(v_or, 10), expected: exp_or },
+          { actual: parseInt(v_impl, 10), expected: exp_impl },
+          { actual: parseInt(v_f, 10), expected: exp_f }
+        ];
+
+        checks.forEach(item => {
+          if (item.actual !== item.expected) {
+            allCorrect = false;
+          }
+        });
+      }
+
+      if (!allFilled || hasDuplicates || seenTriplets.size < 8 || !allCorrect) {
+        handleFailAttempt();
+        return;
+      }
+
+      handleSuccess();
+    }
+
+    function checkDynamicTableAnswer() {
+      if (currentQuestionSolved) return;
+      const q = questionsData[currentQuestion];
+      const rows = Array.from(document.querySelectorAll('#dyn-table-body tr'));
+
+      let userSets = new Set();
+      let hasEmpty = false;
+      let hasDuplicates = false;
+      let hasInvalid = false;
+
+      rows.forEach(tr => {
+        const inputs = tr.querySelectorAll('.dyn-input');
+        let rowStr = '';
+        let rowEmpty = false;
+
+        inputs.forEach(inp => {
+          const val = inp.value.trim();
+          if (val === '') {
+            rowEmpty = true;
+          } else {
+            rowStr += val;
+          }
+        });
+
+        if (rowEmpty) {
+          hasEmpty = true;
+          return;
+        }
+
+        const isValid = q.validateFn(rowStr);
+        if (!isValid) {
+          hasInvalid = true;
+        } else {
+          if (userSets.has(rowStr)) {
+            hasDuplicates = true;
+          }
+        }
+        userSets.add(rowStr);
+      });
+
+      if (hasEmpty || hasDuplicates || hasInvalid || userSets.size < q.minRequired) {
+        handleFailAttempt();
+        return;
+      }
+
+      handleSuccess();
+    }
+
+    function checkStringAnswer() {
+      if (currentQuestionSolved) return;
+      const q = questionsData[currentQuestion];
+      const inputElem = document.getElementById('user-str-input');
+      const val = inputElem ? inputElem.value.trim().toLowerCase() : '';
+
+      if (val !== q.correctAnswer) {
+        handleFailAttempt();
+        return;
+      }
+
+      handleSuccess();
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questionsData.length) {
+        loadQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        score: score,
+        scores: questionScores
+      }));
+      renderResultScreen(false);
+    }
+
+    function renderResultScreen(isLocked) {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('quiz-content').style.display = 'none';
+      const resultScreen = document.getElementById('result-screen');
+      resultScreen.style.display = 'block';
+      
+      document.getElementById('final-score').innerText = `${score} / ${maxScore}`;
+      const msg = document.getElementById('final-message');
+      
+      if (score === maxScore) {
+        msg.innerText = "Идеальный результат! Все задания решены верно с 1-й попытки.";
+      } else if (score >= 8) {
+        msg.innerText = "Отличный результат! Большинство заданий решено успешно.";
+      } else if (score >= 5) {
+        msg.innerText = "Хороший результат, но стоит повторить некоторые темы.";
+      } else {
+        msg.innerText = "Рекомендуется повторить правила алгебры логики.";
+      }
+
+      if (isLocked) {
+        document.getElementById('locked-msg').style.display = 'inline-block';
+      }
+
+      const badgesContainer = document.getElementById('results-badges');
+      badgesContainer.innerHTML = '';
+      questionsData.forEach((_, idx) => {
+        const itemScore = questionScores[idx] || 0;
+        const badge = document.createElement('div');
+        badge.className = `badge-item score-${itemScore}`;
+        badge.innerHTML = `№${idx + 1}<span>${itemScore > 0 ? '+' + itemScore : '0'} б.</span>`;
+        badgesContainer.appendChild(badge);
+      });
+    }
+  </script>
+</body>
+</html>
